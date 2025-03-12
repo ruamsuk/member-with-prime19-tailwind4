@@ -62,31 +62,6 @@ export class HeaderComponent {
   currentUser = this.authService.currentUser;
 
   constructor() {
-    this.items = [
-      {
-        label: 'Home',
-        icon: 'pi pi-home',
-        command: () => this.router.navigateByUrl('/'),
-      },
-      {
-        label: 'Members',
-        icon: 'pi pi-users',
-        command: () => this.router.navigateByUrl('/members'),
-      },
-      {
-        label: 'Users',
-        icon: 'pi pi-user-plus',
-        command: () => this.router.navigateByUrl('/users'),
-      },
-      {
-        label: 'Logout',
-        icon: 'pi pi-sign-out',
-        command: () => {
-          this.logout();
-        },
-      },
-    ];
-
     this.subitems = [
       {
         label: 'Profile',
