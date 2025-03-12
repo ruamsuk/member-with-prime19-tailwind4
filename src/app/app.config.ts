@@ -12,7 +12,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 import { DialogService } from 'primeng/dynamicdialog';
 import { environment } from '../environments/environment';
-import MyPreset from '../themes/myTheme ';
+import YourPreset from '../themes/style';
 
 import { routes } from './app.routes';
 
@@ -28,7 +28,7 @@ export const appConfig: ApplicationConfig = {
     provideStorage(() => getStorage()),
     providePrimeNG({
       theme: {
-        preset: MyPreset,
+        preset: YourPreset,
         options: {
           prefix: 'p-',
           darkModeSelector: 'system',

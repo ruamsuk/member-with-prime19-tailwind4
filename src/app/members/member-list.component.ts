@@ -40,7 +40,7 @@ import { MemberDetailComponent } from './member-detail.component';
               <div class="flex items-center justify-between">
               <span>
                 <p-button (click)="showDialog('')"
-                          [disabled]="!admin"
+                          [disabled]="!admin()"
                           size="small" icon="pi pi-plus"
                           pTooltip="เพิ่มสมาชิก"/>
               </span>
@@ -81,7 +81,7 @@ import { MemberDetailComponent } from './member-detail.component';
                   ยศ ชื่อ ชื่อสกุล
                   <p-sortIcon field="firstname"></p-sortIcon>
                 </th>
-                <th style="width: 15%">วันเดือนปีเกิด</th>
+                <th style="width: 17%">วันเดือนปีเกิด</th>
                 <th style="width: 15%">Action</th>
               </tr>
             </ng-template>
@@ -91,16 +91,14 @@ import { MemberDetailComponent } from './member-detail.component';
                   {{ currentPage * rowsPerPage + i + 1 }}
                 </td>
                 <td [ngClass]="{ isAlive: member.alive == 'เสียชีวิตแล้ว' }">
-                  <span class="truncate">
-                    {{ member.rank }}{{ member.firstname }}
-                    {{ member.lastname }}
-                  </span>
+                  {{ member.rank }}{{ truncateText(member.firstname, 15) }}
+                  {{ truncateText(member.lastname, 15) }}
                 </td>
                 <td [ngClass]="{ isAlive: member.alive == 'เสียชีวิตแล้ว' }">
                   {{ member.birthdate | thaiDate }}
                 </td>
                 <td>
-                  @if (admin) {
+                  @if (admin()) {
                     <i
                       class="pi pi-list mr-2 text-green-400"
                       (click)="openDialog(member)" pTooltip="รายละเอียด"
@@ -116,7 +114,7 @@ import { MemberDetailComponent } from './member-detail.component';
                        class="pi pi-trash mr-2 ml-2 text-orange-600"
                        pTooltip="ลบรายการนี้" tooltipPosition="bottom"
                     ></i>
-                  } @else if (isMember) {
+                  } @else if (isMember()) {
                     <i
                       class="pi pi-list mr-2 text-green-400"
                       (click)="openDialog(member)"
@@ -131,7 +129,7 @@ import { MemberDetailComponent } from './member-detail.component';
             </ng-template>
             <ng-template #footer>
               <td colspan="5">
-                @if (!admin && !isMember) {
+                @if (!admin() && !isMember()) {
                   <div>
                     <p-message severity="warn" icon="pi pi-exclamation-circle" styleClass="center-v italic">
                       Visitors are not allowed to view member details.
@@ -175,8 +173,8 @@ export class MemberListComponent implements OnDestroy {
   ref: DynamicDialogRef | undefined;
   currentPage = 0;
   rowsPerPage = 10;
-  admin: boolean = false;
-  isMember: boolean = false;
+  admin = signal(false);
+  isMember = signal(false);
   members!: Member[];
   member!: Member;
   searchValue = new FormControl('');
@@ -218,8 +216,8 @@ export class MemberListComponent implements OnDestroy {
 
   chkRole() {
     this.authService.userProfile$.pipe(take(1)).subscribe((user: any) => {
-      this.admin = user.role === 'admin' || user.role === 'manager';
-      this.isMember = user.role === 'member';
+      this.admin.set(user.role === 'admin' || user.role === 'manager');
+      this.isMember.set(user.role === 'member');
     });
   }
 

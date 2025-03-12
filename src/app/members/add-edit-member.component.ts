@@ -24,6 +24,7 @@ import { SharedModule } from '../shared/shared.module';
             (completeMethod)="filterRanks($event)"
             appendTo="body"
             optionLabel="rank"
+            optionValue="rank"
             styleClass="w-full"
             placeholder="เลือกยศ"
           >
@@ -263,9 +264,10 @@ export class AddEditMemberComponent implements OnInit {
       this.message.showError('Error', 'กรุณากรอกข้อมูลให้ครบก่อนบันทึก');
       return;
     }
-
-    const dataForm = this.memberForm.value;
-    const rankD = (typeof dataForm.rank === 'object' && dataForm.rank !== null) ? dataForm.rank.rank : dataForm.rank;
+    
+    /** AutoComplete ใช้ optionValue ไม่ต้องใช้ 2 บรรทัดนี้ */
+      // const dataForm = this.memberForm.value;
+      // const rankD = (typeof dataForm.rank === 'object' && dataForm.rank !== null) ? dataForm.rank.rank : dataForm.rank;
 
     const {day, month, year, ...formData} = this.memberForm.value;
     const birthdate = new Date(year - 543, month - 1, day);
@@ -274,7 +276,7 @@ export class AddEditMemberComponent implements OnInit {
     const firestoreTimestamp = Timestamp.fromDate(birthdate);
     const memberData = {
       ...formData,
-      rank: rankD,
+      // rank: rankD,
       birthdate: firestoreTimestamp,
       alive: status,
       updated: Timestamp.now() // อัปเดตเวลาที่แก้ไขข้อมูล
@@ -285,10 +287,23 @@ export class AddEditMemberComponent implements OnInit {
         error: err => this.message.showError('Error', err.message),
       });
     } else {
-      this.membersService.addMember(memberData).subscribe({
-        next: () => this.message.showSuccess('Successfully', 'บันทึกข้อมูลใหม่สำเร็จ'),
-        error: err => this.message.showError('Error', err.message),
-      });
+      this.membersService.checkDuplicate(memberData.firstname, memberData.lastname)
+        .subscribe({
+          next: (isDuplicate: boolean) => {
+            if (isDuplicate) {
+              this.message.showWarn('ข้อมูลซ้ำ', 'มีสมาชิกท่านนี้อยู่ในระบบแล้ว');
+            } else {
+              this.membersService.addMember(memberData).subscribe({
+                next: () => this.message.showSuccess('Successfully', 'บันทึกข้อมูลใหม่สำเร็จ'),
+                error: err => this.message.showError('Error', err.message),
+              });
+            }
+          },
+          error: err => {
+            console.error('Error checking for duplicate:', err.message);
+            this.message.showError('Error', err.message);
+          },
+        });
     }
     this.ref.close(true);
   }

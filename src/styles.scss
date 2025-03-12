@@ -71,7 +71,7 @@ html, body {
 
 /* ให้ใช้ใน container จะขยายเต็ม */
 .table-container {
-  @apply overflow-x-auto overflow-y-hidden w-full;
+  @apply overflow-x-auto overflow-y-hidden mx-auto w-[700px] max-w-full;
 }
 
 .loading-shade {
@@ -89,17 +89,19 @@ th {
 }
 
 .isAlive {
-  color: #78f153 !important;
+  color: #7d7c7c !important;
   font-weight: 500 !important;
-  font-family: 'Sarabun', sans-serif;
   margin-left: 0.5rem;
   margin-top: 0.1rem;
+
+  &:hover {
+    color: #99d7f4 !important;
+  }
 }
 
 .status {
   color: #f63653 !important;
   font-weight: 500 !important;
-  font-family: 'Sarabun', sans-serif;
   margin-left: 0.5rem;
   margin-top: 0.1rem;
 }

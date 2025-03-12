@@ -36,6 +36,12 @@ export const routes: Routes = [
       .then(m => m.MemberListComponent),
   },
   {
+    path: 'users',
+    ...canActivate(redirectUnauthorizedToLogin),
+    loadComponent: () => import('./users/user-list.component')
+      .then(m => m.UserListComponent),
+  },
+  {
     path: '',
     pathMatch: 'full',
     redirectTo: 'home'

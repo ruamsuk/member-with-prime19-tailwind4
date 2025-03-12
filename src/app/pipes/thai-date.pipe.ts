@@ -44,6 +44,8 @@ export class ThaiDatePipe implements PipeTransform {
       full: [`วัน${ThaiDay[dayOfWeek]}`, `ที่ ${day}`, `เดือน${thaiMonth[month]}`, `พ.ศ. ${year}`],
       /** อาทิตย์, 01, มกราคม, 2564 */
       medium: [`${day}`, `${sThaiMonth[month]}`, `${year}`],
+      /** อา 1 มกราคม 2568 */
+      fullMonth: [`${sThaiDay[dayOfWeek]}`, `${day}`, `${thaiMonth[month]}`, `${year}`],
       /** อา., 01, ม.ค., 2564 */
       mediumd: [`${sThaiDay[dayOfWeek]}`, `${day}`, `${sThaiMonth[month]}`, `${year}`],
       /** อา., 01, ม.ค., 2564 - 12:00:00 */

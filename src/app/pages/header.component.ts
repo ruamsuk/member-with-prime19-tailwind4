@@ -1,8 +1,9 @@
 import { NgOptimizedImage } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { take } from 'rxjs';
 import { UserProfileComponent } from '../auth/user-profile.component';
 import { AuthService } from '../services/auth.service';
 import { SharedModule } from '../shared/shared.module';
@@ -56,6 +57,8 @@ export class HeaderComponent {
   items: MenuItem[] | undefined;
   subitems: MenuItem[] | undefined;
   ref: DynamicDialogRef | undefined;
+  admin = signal(false);
+  isMember = signal(false);
   currentUser = this.authService.currentUser;
 
   constructor() {
@@ -96,6 +99,39 @@ export class HeaderComponent {
         command: () => this.logout(),
       },
     ];
+    this.checkRole();
+  }
+
+  private checkRole() {
+    this.authService.userProfile$.pipe(take(1)).subscribe((user: any) => {
+      this.admin.set(user.role === 'admin' || user.role === 'manager');
+      this.isMember.set(user.role === 'member');
+
+      this.items = [
+        {
+          label: 'Home',
+          icon: 'pi pi-home',
+          command: () => this.router.navigateByUrl('/'),
+        },
+        {
+          label: 'Members',
+          icon: 'pi pi-users',
+          command: () => this.router.navigateByUrl('/members'),
+        },
+        ...(this.admin() ? [{
+          label: 'Users',
+          icon: 'pi pi-user-plus',
+          command: () => this.router.navigateByUrl('/users'),
+        }] : []),
+        {
+          label: 'Logout',
+          icon: 'pi pi-sign-out',
+          command: () => {
+            this.logout();
+          },
+        },
+      ];
+    });
   }
 
   private userDialog() {

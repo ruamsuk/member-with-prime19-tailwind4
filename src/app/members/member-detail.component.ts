@@ -17,7 +17,7 @@ import { SharedModule } from '../shared/shared.module';
       </tr>
       <tr>
         <th>วันเดือนปีเกิด:</th>
-        <td>{{ member.birthdate | thaiDate }}</td>
+        <td>{{ member.birthdate | thaiDate: 'fullMonth' }}</td>
       </tr>
       <tr>
         <th>อายุ:</th>
